@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+child_pid=""
+
+_sigdie() {
+  echo "Caught SIGTERM signal,"
+  kill -TERM "$child_pid" 2>/dev/null
+}
+
+trap _sigdie SIGTERM
+trap _sigdie SIGINT
+
+bin_path="$( cd "$( dirname "$0" )" && pwd )"
+
+socket_path="${1-}"
+
+if [ -z "$socket_path" ]; then
+    echo "usage: $0 /path/to/socket.sock"
+    exit 99
+fi
+
+if [ -e "$socket_path" -a ! -S "$socket_path" ]; then
+    echo "file exists and is NOT a socket, quitting"
+    exit 98
+fi
+
+rm -f "$socket_path"
+
+
+echo "Power cycling bluetooth controller"
+btmgmt power off
+sleep 1
+btmgmt power on
+
+echo "Creating socket at path: $socket_path"
+
+"$bin_path/ibeacon_scan" "$@" | socat STDIN "UNIX-LISTEN:$socket_path,fork" & 
+
+child_pid=$!
+wait "$child_pid"
