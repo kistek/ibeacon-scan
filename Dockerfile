@@ -8,6 +8,7 @@ RUN env DEBIAN_FRONTEND=noninteractive \
         bc \
         bluez \
         bluez-hcidump \
+        moreutils \
         socat && \
     apt-get clean
 

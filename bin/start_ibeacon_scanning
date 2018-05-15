@@ -36,7 +36,7 @@ btmgmt power on
 
 echo "Creating socket at path: $socket_path"
 
-("$bin_path/ibeacon_scan" "$@" | socat STDIN "UNIX-LISTEN:$socket_path,fork") &
+("$bin_path/ibeacon_scan" "$@" | ts '%.s' | socat STDIN "UNIX-LISTEN:$socket_path,fork") &
 
 child_pid=$!
 wait "$child_pid"
