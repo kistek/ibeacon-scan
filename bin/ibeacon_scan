@@ -49,7 +49,7 @@ if [[ $1 == "parse" ]]; then
     fi
   done
 else
-  hcitool -i hci0 lescan --duplicates --passive 1>/dev/null &
+  hcitool -i hci0 lescan --duplicates 1>/dev/null &
   if [ "$(pidof hcitool)" ]; then
      hcidump --raw | "$0" parse "$1"
   fi
