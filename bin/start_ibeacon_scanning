@@ -5,7 +5,7 @@ IFS=$'\n\t'
 child_pid=""
 
 _sigdie() {
-  echo "Caught SIGTERM signal,"
+  echo "Caught SIG TERM||INT, shutting down"
   kill -TERM "$child_pid" 2>/dev/null
 }
 
