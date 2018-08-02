@@ -32,6 +32,13 @@ rm -f "$socket_path"
 echo "Power cycling bluetooth controller"
 btmgmt power off
 sleep 1
+if rfkill | grep hci0 | grep -qP '\bblocked'; then
+    bt_id="$(rfkill |grep hci0 |awk '{ print $1 }')"
+    echo "rfkill showing bluetooth device is blocked:"
+    rfkill
+    rfkill unblock "$bt_id"
+    echo "unblock done"
+fi
 btmgmt power on
 
 echo "Creating socket at path: $socket_path"
