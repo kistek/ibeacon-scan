@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # iBeacon Scan by Radius Networks
+
+set -eo pipefail
 
 trap 'exit' TERM
 trap 'exit' INT
@@ -27,13 +29,13 @@ if [[ $1 == "parse" ]]; then
           MINOR=`echo "ibase=16; $MINOR" | bc`
           POWER=`echo "ibase=16; $POWER" | bc`
           POWER=$[POWER - 256]
-		 RSSI=`echo $packet | sed 's/^.\{132\}\(.\{2\}\).*$/\1/'`
-		 RSSI=`echo "ibase=16; $RSSI" | bc`
-		 RSSI=$[RSSI - 256]
+          RSSI=`echo $packet | sed 's/^.\{132\}\(.\{2\}\).*$/\1/'`
+          RSSI=`echo "ibase=16; $RSSI" | bc`
+          RSSI=$[RSSI - 256]
           if [[ $2 == "-b" ]]; then
-	    echo "$UUID $MAJOR $MINOR $POWER"
+              echo "$UUID $MAJOR $MINOR $POWER"
           else
-    	    echo "UUID: $UUID MAJOR: $MAJOR MINOR: $MINOR POWER: $POWER RSSI: $RSSI"
+              echo "UUID: $UUID MAJOR: $MAJOR MINOR: $MINOR POWER: $POWER RSSI: $RSSI"
           fi
         fi
         capturing=""

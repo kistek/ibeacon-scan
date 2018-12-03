@@ -21,15 +21,14 @@ if [ -z "$socket_path" ]; then
     exit 99
 fi
 
-if [ -e "$socket_path" -a ! -S "$socket_path" ]; then
+if [ -e "$socket_path" ] && [ ! -S "$socket_path" ]; then
     echo "file exists and is NOT a socket, quitting"
     exit 98
 fi
 
 rm -f "$socket_path"
 
-
-echo "Power cycling bluetooth controller"
+echo "Power cycling bluetooth controller..."
 btmgmt power off
 sleep 1
 if rfkill | grep hci0 | grep -qP '\bblocked'; then
@@ -41,6 +40,7 @@ if rfkill | grep hci0 | grep -qP '\bblocked'; then
 fi
 btmgmt power on
 
+echo "Power cycle complete."
 echo "Creating socket at path: $socket_path"
 
 ("$bin_path/ibeacon_scan" "$@" | ts '%.s' | socat STDIN "UNIX-LISTEN:$socket_path,fork") &
